@@ -1,2 +1,2 @@
 [dockerhosts]
-vector ansible_host=192.168.1.101 ansible_user=maintenance ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+vector ansible_host=vector.ournetwork.ca ansible_user=maintenance ansible_ssh_common_args='-o StrictHostKeyChecking=no'
