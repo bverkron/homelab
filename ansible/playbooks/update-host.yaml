@@ -4,5 +4,5 @@
   become: yes
   tasks:
     - name: Update package cache
-    apt:
-      upgrade: yes
+      apt:
+        upgrade: yes
