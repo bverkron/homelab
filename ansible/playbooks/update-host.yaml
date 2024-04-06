@@ -1,4 +1,4 @@
-- hosts: '{{ docker_hosts }}'
+- hosts: "{{ docker_hosts }}"
   become: true
   gather_facts: no
   
