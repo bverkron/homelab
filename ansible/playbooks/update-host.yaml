@@ -1,0 +1,8 @@
+- hosts: all
+  become: true
+  gather_facts: no
+  
+  tasks:
+  - name: Update and upgrade apt packages
+    apt:
+      upgrade: yes
