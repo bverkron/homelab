@@ -1,8 +1,8 @@
-- hosts: "{{ docker_hosts }}"
-  gather_facts: no
-  
+---
+- name: Upgrade OS
+  hosts: "{{ docker_hosts }}"
+  become: yes
   tasks:
-  - name: Update and upgrade apt packages
-    become: true
+    - name: Update package cache
     apt:
       upgrade: yes
