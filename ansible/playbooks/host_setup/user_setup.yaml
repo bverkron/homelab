@@ -1,0 +1,61 @@
+# OVERVIEW:
+# Based on https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-automate-initial-server-setup-on-ubuntu-20-04
+# Modified to be more restrictive with the user and sudo, etc.
+# Did not want to create a sudo group or have such broad permissions in sudoers file. Should only be allowed to run specific commands where possible.
+
+# INSTRUCTIONS:
+# Run this directly on the new host you're setting up.
+# Afer this initial configuration is done you should be able to use {{ created_username }} to run ansible scripts remotely.
+
+---
+- hosts: all
+  become: true
+  vars:
+    created_username: ansible
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    # TODO: You may want to use a specific uid for this user since if it's a docker host containers from LinuxServer.io
+    #   often are set to use PUID and GUID of 1001 (for file permissions and other permissions) which is usually the first new user created if a UID isn't specified.
+    # Thus if you do not specific a UID for {{ created_username }} it will probably get the UID of 1001 and thus be used by certain docker containers.
+    - name: Create user {{ created_username }}
+      user:
+        name: "{{ created_username }}"
+        state: present
+        groups: sudo
+        append: true
+        create_home: true        
+
+    - name: Setup sudo privileges for user {{ created_username }}
+      lineinfile:
+        path: /etc/sudoers
+        state: present
+        line: "{{ created_username }} ALL=(ALL:ALL) NOPASSWD: /usr/bin/sh # For Ansible to use become for running privileged commands"
+        validate: '/usr/sbin/visudo -cf %s'
+
+    - name: Set authorized key for remote user
+      ansible.posix.authorized_key:
+        user: "{{ created_username }}"
+        state: present
+        key: "{{ lookup('file', lookup('env','HOME') + '/.ssh/id_rsa.pub') }}"
+
+    - name: Disable password authentication for root
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        regexp: '^#?PermitRootLogin'
+        line: 'PermitRootLogin prohibit-password'
+
+    - name: Update apt and install required system packages
+      apt:
+        pkg:
+          - curl
+          # - vim
+          # - git
+        state: latest
+        update_cache: true
