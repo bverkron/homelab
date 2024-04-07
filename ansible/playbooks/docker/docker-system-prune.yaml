@@ -4,7 +4,7 @@
   gather_facts: false
 
   tasks:
-  - name: Run docker system prune -f
+  - name: Run docker system prune
     ansible.builtin.raw: sudo docker system prune -f
     register: output
 
