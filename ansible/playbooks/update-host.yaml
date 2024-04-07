@@ -1,4 +1,9 @@
 # source: https://www.cyberciti.biz/faq/ansible-apt-update-all-packages-on-ubuntu-debian-linux/
+
+# PREREQUISITES
+# - /etc/sudoers/<username> file contains lines below. Replace user 'maintenance' with whatever the username is you are using for SSH
+# maintenance ALL=(ALL:ALL) NOPASSWD: /usr/bin/sh # For Ansible to use become for running privileged commands
+
 ---
 - hosts: "{{ hosts }}"
   become: true
