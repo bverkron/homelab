@@ -27,8 +27,6 @@
       user:
         name: "{{ created_username }}"
         state: present
-        groups: sudo
-        append: true
         create_home: true        
 
     - name: Setup sudo privileges for user {{ created_username }}
