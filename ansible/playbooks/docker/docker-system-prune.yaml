@@ -1,0 +1,11 @@
+---
+- name: Docker system prune
+  hosts: "{{ hosts }}"
+  gather_facts: false
+
+  tasks:
+  - name: Run docker system prune -f
+    ansible.builtin.raw: sudo docker system prune -f
+    register: output
+
+  - debug: var=output.stdout_lines

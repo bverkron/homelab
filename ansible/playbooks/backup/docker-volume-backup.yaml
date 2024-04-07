@@ -2,11 +2,12 @@
 - name: Run ad-hoc backup using offen/docker-volume-backup
   hosts: "{{ hosts }}"
   gather_facts: false
+  become: true
 
   tasks:
   - name: Run docker-volume-backup for {{ app_name }}
     # ansible.builtin.raw: sudo docker exec ${container_name}-backup backup
-    ansible.builtin.raw: sudo docker exec {{ app_name | trim }}-backup backup
+    ansible.builtin.raw: docker exec {{ app_name | trim }}-backup backup
     register: output
 
   # use minimal instead for cleaner output: https://serverfault.com/a/842944
