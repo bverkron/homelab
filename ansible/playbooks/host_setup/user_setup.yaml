@@ -11,6 +11,8 @@
 - hosts: all
   become: true
   vars:
+    # Calling the user 'ansibe' for now since it might be a good idea to have different users for different IaC contexts and tasks.
+    # Like only use the 'ansibe' user for ansible tasks and other users if you have other non-ansible tasks instead of a general 'automation' or 'iac' user
     created_username: ansible
 
   tasks:
@@ -20,13 +22,15 @@
         state: latest
         update_cache: true
 
-    # TODO: You may want to use a specific uid for this user since if it's a docker host containers from LinuxServer.io
-    #   often are set to use PUID and GUID of 1001 (for file permissions and other permissions) which is usually the first new user created if a UID isn't specified.
-    # Thus if you do not specific a UID for {{ created_username }} it will probably get the UID of 1001 and thus be used by certain docker containers.
     - name: Create user {{ created_username }}
       user:
         name: "{{ created_username }}"
         state: present
+        # Use a specific uid for this user since if it's a docker host containers from LinuxServer.io
+        # often are set to use PUID and GUID of 1001 (for file permissions and other permissions) which is usually the first new user created if a UID isn't specified.
+        # Thus if you do not specific a UID for {{ created_username }} it will probably get the UID of 1001 and thus be used by certain docker containers.
+        # Fun fact: 4513 are 4 digits in the word ansible if you translate to leep speak. i.e. 4n51bl3
+        uid: 4513
         create_home: true        
 
     - name: Setup sudo privileges for user {{ created_username }}
