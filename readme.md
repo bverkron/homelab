@@ -1,0 +1,3 @@
+Ideas for other IaC playbooks
+
+- Create the Ansible Semaphore jobs for running this stuff. This would be better than relying on just backups of Semaphore that you can restore since it can be a touchy process and it's usually all or nothing. But this might rely on the Sempaphore API which is kind app / service specific and you may move to another orchestrator in the future. Would be nice to find one that just uses yaml or something for it's config.
