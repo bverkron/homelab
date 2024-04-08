@@ -1,0 +1,37 @@
+---
+- name: Reboot host
+  hosts: "{{ hosts }}"
+  gather_facts: false
+
+  tasks:
+  # - name: Reboot host
+  #   # This should trigger a reboot without after a short delay and run in the background, even after the ssh session disconnects. This should allow the ansible task time to complete successfully and not be cut off before the host reboots.
+  #   # Edit: Tried a bunch of variations (that all work when testing manually) and none of them reboot the host except a straight up sudo systemctl reboot which of course hangs the job.
+  #   # ansible.builtin.raw: (sleep 5 && sudo systemctl reboot;) >/dev/null &
+  #   # ansible.builtin.raw: (sleep 5 && sudo systemctl reboot;)
+  #   # ansible.builtin.raw: sleep 5 && sudo systemctl reboot &
+  #   # ansible.builtin.shell: sleep 5 && sudo systemctl reboot &
+  #   # ansible.builtin.raw: nohup sudo reboot &>/dev/null & exit
+  #   # ansible.builtin.raw: nohup sleep 5; sudo systemctl reboot & exit
+  #   # ansible.builtin.raw: ~/reboot.sh
+  #   # ansible.builtin.raw: "{ sleep 1; reboot -f; } >/dev/null &"
+  #   # ansible.builtin.raw: sleep 3; sudo systemctl reboot &
+  #   # ansible.builtin.raw: sleep 10; sudo systemctl reboot &
+  #   # ansible.builtin.shell: sleep 5; sudo systemctl reboot </dev/null >/dev/null 2>&1 &
+  #   ansible.builtin.raw: sudo systemctl reboot
+  #   register: output
+
+  # # Does not work
+  # # - name: Reboot host
+  # #   ansible.builtin.script: ../scripts/reboot.sh
+  # #   register: output
+
+  # # use minimal instead for cleaner output: https://serverfault.com/a/842944
+  # - debug: var=output.stdout_lines
+    - shell: "sleep 3; sudo systemctl reboot &"
+      async: 10 # This is critial. Will not reboot without this. Unsure if value matters much. 10 worked so I left it. This might prevent the output from being registered. i.e. "output.stdout_lines": "VARIABLE IS NOT DEFINED!"
+      poll: 0
+      register: output
+ 
+    # use minimal instead for cleaner output: https://serverfault.com/a/842944
+    - debug: var=output.stdout_lines
