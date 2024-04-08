@@ -13,7 +13,7 @@
   #   register: cleanup_output
 
   - name: Run ftp cam footage cleanup
-    ansible.builtin.script: scripts/cleanup_ftp_cam_footage.sh 2>&1 | tee -a /share/MD0_DATA/ftp/cleanup.log
+    ansible.builtin.script: ../../../scripts/nas/cleanup_ftp_cam_footage.sh 2>&1 | tee -a /share/MD0_DATA/ftp/cleanup.log
     register: cleanup_output
 
   # use minimal instead for cleaner output: https://serverfault.com/a/842944
