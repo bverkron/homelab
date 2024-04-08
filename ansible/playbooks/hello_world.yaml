@@ -1,6 +1,5 @@
 ---
-
-- hosts: {{ hosts }}
+- hosts: "{{ hosts }}"
   gather_facts: no
   tasks:
     - command: echo 'hello world'
