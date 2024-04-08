@@ -4,15 +4,8 @@
   gather_facts: false
 
   tasks:
-  # In future switch to one of these methods to keep the script source in the repo instead of on the server
-  # script: https://docs.ansible.com/ansible/latest/collections/ansible/builtin/script_module.html
-  # local_action + scp: https://somakdas.medium.com/simple-ansible-paybook-without-python-installed-in-target-machines-1df423004da5 
-  # - name: Run ftp cam footage cleanup
-  #   # ansible.builtin.raw: touch ~/success.txt
-  #   ansible.builtin.raw: /share/MD0_DATA/ftp/cleanup.sh 2>&1 | tee -a /share/MD0_DATA/ftp/console.log
-  #   register: cleanup_output
-
   - name: Run ftp cam footage cleanup
+    # uploades the specified script and executes it as directed. Seems path needs to be relative since the working directory is the directory the playbook is in
     ansible.builtin.script: ../../../scripts/nas/cleanup_ftp_cam_footage.sh 2>&1 | tee -a /share/MD0_DATA/ftp/cleanup.log
     register: cleanup_output
 
