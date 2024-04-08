@@ -1,0 +1,10 @@
+---
+- name: Debug script
+  hosts: localhost
+  connection: local 
+
+  tasks:
+    - command: "ls ~/"
+      register: dir_out
+
+    - debug: var=dir_out.stdout_lines
