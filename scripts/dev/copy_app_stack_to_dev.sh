@@ -1,0 +1,1 @@
+scp -r /home/mcp/app-stacks/$1 mcp@dev.ournetwork.ca:/home/mcp/app-stacks/$1
