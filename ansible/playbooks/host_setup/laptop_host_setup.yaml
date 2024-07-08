@@ -1,0 +1,3 @@
+# add step for preventing sleep if lid closed (either on purpose to prevent screen on / power usage all the time or by accident)
+# adding HandleLidSwitch=ignore to /etc/systemd/logind.conf work for me on Ubuntu as per 
+# https://askubuntu.com/questions/15520/how-can-i-tell-ubuntu-to-do-nothing-when-i-close-my-laptop-lid
