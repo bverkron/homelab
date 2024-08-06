@@ -1,0 +1,17 @@
+---
+- name: Clean FTP footage
+  hosts: vector
+  gather_facts: false
+
+  tasks:
+    - name: Find files older than x days
+      find:
+        paths: /media/ext_storage/ftp/cam-ftp/
+        age: 14d
+        recurse: yes
+      register: oldFiles
+    - name: Remove older than x days
+      file:
+        path: "{{ item.path }}" 
+        state: absent
+      with_items: "{{ oldFiles.files }}"
