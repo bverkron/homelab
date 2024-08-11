@@ -17,6 +17,5 @@
     - name: Configure cron job for monitoring
       ansible.builtin.cron:
         name: "nas share monitor"
-        minute: "5"
-        hour: "5,2"
+        minute: "*/5"
         job: "{{ nas_share_monitor_script_path }} > /dev/null"
