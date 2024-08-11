@@ -11,7 +11,7 @@
     - name: Copy monitoring scripts to run locations
       ansible.builtin.copy:
         src: "../../../scripts/hosts/monitoring/{{ nas_share_monitor_script_name }}"
-        dest: "{{ nas_share_monitor_script }}"
+        dest: "{{ nas_share_monitor_script_path }}"
         mode: '+x'
 
     - name: Configure cron job for monitoring
@@ -19,4 +19,4 @@
         name: "nas share monitor"
         minute: "5"
         hour: "5,2"
-        job: "{{ nas_share_monitor_script }} > /dev/null"
+        job: "{{ nas_share_monitor_script_path }} > /dev/null"
