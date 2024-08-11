@@ -2,16 +2,16 @@
 - hosts: all
   become: true
   vars:
-    NAS_SHARE_MONITOR_SCRIPT_NAME: nas_share_monitoring.sh
-    NAS_SHARE_MONITOR_SCRIPT_PATH: "/root/scripts/{{ NAS_SHARE_MONITOR_SCRIPT_NAME }}"
+    nas_share_monitor_script_name: nas_share_monitoring.sh
+    nas_share_monitor_script_path: "/root/scripts/{{ nas_share_monitor_script_name }}"
 
   tasks:
     # Currently needs to be run as the root user because of how the network share is mapped by the root user
     # I think because some of the docker containers are running as root? I can't remember.
     - name: Copy monitoring scripts to run locations
       ansible.builtin.copy:
-        src: "../../../scripts/hosts/monitoring/{{ NAS_SHARE_MONITOR_SCRIPT_NAME }}"
-        dest: "{{ NAS_SHARE_MONITOR_SCRIPT }}"
+        src: "../../../scripts/hosts/monitoring/{{ nas_share_monitor_script_name }}"
+        dest: "{{ nas_share_monitor_script }}"
         mode: '+x'
 
     - name: Configure cron job for monitoring
@@ -19,4 +19,4 @@
         name: "nas share monitor"
         minute: "5"
         hour: "5,2"
-        job: "{{ NAS_SHARE_MONITOR_SCRIPT }} > /dev/null"
+        job: "{{ nas_share_monitor_script }} > /dev/null"
