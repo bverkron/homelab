@@ -20,4 +20,4 @@
       ansible.builtin.cron:
         name: "nas share monitor"
         minute: "*/1"
-        job: "{{ nas_share_monitor_script_path }} > {{ nas_share_monitor_script_dir }}/{{ nas_share_monitoring }}.log"
+        job: "{{ nas_share_monitor_script_path }} > {{ nas_share_monitor_script_dir }}/{{ script_name }}.log"
