@@ -2,8 +2,10 @@
 - hosts: all
   become: true
   vars:
-    nas_share_monitor_script_name: nas_share_monitoring.sh
-    nas_share_monitor_script_path: "/root/scripts/{{ nas_share_monitor_script_name }}"
+    script_name: nas_share_monitoring
+    nas_share_monitor_script_dir: "/root/scripts"
+    nas_share_monitor_script_name: "{{ script_name }}.sh"
+    nas_share_monitor_script_path: "{{ nas_share_monitor_script_dir }}/{{ nas_share_monitor_script_name }}"
 
   tasks:
     # Currently needs to be run as the root user because of how the network share is mapped by the root user
@@ -18,4 +20,4 @@
       ansible.builtin.cron:
         name: "nas share monitor"
         minute: "*/1"
-        job: "{{ nas_share_monitor_script_path }} > /dev/null"
+        job: "{{ nas_share_monitor_script_path }} > {{ nas_share_monitor_script_dir }}/{{ nas_share_monitoring }}.log"
