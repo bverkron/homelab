@@ -1,0 +1,1 @@
+docker restart $(docker ps --filter "name=backup" -q)
