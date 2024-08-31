@@ -7,7 +7,9 @@
     - name: Find files older than x days
       find:
         paths: /media/ext_storage/ftp/cam-ftp/
-        file_type: directory
+        # This will wipe the top level camera directories since they were originally created at the very start of when the content started to be written into the ftp directory.
+        # The timestamps of the folders at that level don't get updated when newer files / folder get written within them. Ouch
+        # file_type: directory
         age: 14d
         recurse: yes
       register: oldFiles
