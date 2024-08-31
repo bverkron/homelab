@@ -7,6 +7,7 @@
     - name: Find files older than x days
       find:
         paths: /media/ext_storage/ftp/cam-ftp/
+        file_type: directory
         age: 14d
         recurse: yes
       register: oldFiles
