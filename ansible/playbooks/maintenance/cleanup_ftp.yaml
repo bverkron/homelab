@@ -11,6 +11,7 @@
         recurse: yes
       register: oldFiles
     - name: Remove older than x days
+      become: true
       file:
         path: "{{ item.path }}" 
         state: absent
