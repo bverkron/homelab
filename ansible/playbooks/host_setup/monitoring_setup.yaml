@@ -5,6 +5,9 @@
   vars:
     # script_name: nas_share_monitoring
     script_dir: "/root/scripts"
+    scripts:
+      - nas_share_monitoring.sh
+      - external_drive_monitoring.sh
     # nas_share_monitor_script_name: "{{ script_name }}.sh"
     # nas_share_monitor_script_path: "{{ nas_share_monitor_script_dir }}/{{ nas_share_monitor_script_name }}"
 
@@ -14,11 +17,12 @@
         path: "{{ script_dir }}"
         state: directory
 
-    - name: Copy contents from source to destination
+    - name: Copy monitoring script to destination
       copy:
-        src: "../../../scripts/hosts/monitoring/"
+        src: "../../../scripts/hosts/monitoring/{{ item }}"
         dest: "{{ script_dir }}"
         mode: '+x'
+      loop: "{{ scripts }}"
 
     # Currently needs to be run as the root user because of how the network share is mapped by the root user
     # I think because some of the docker containers are running as root? I can't remember.
@@ -28,14 +32,15 @@
     #     dest: "{{ nas_share_monitor_script_path }}"
     #     mode: '+x'
 
-    - name: Configure cron job for monitoring
+    - name: Configure cron job for monitoring script
       ansible.builtin.cron:
-        name: "nas share monitor"
+        # name: ""
         minute: "*/5"
-        job: "{{ script_dir }}/nas_share_monitoring.sh > nas_share_monitoring.log"
+        job: "{{ script_dir }}/{{ item }} > {{ script_dir }}/{{ item }}"
+      loop: "{{ scripts }}"
 
-    - name: Configure cron job for monitoring
-      ansible.builtin.cron:
-        name: "external drive monitor"
-        minute: "*/5"
-        job: "{{ script_dir }}/external_drive_monitoring.sh > external_drive_monitoring.log"
+    # - name: Configure cron job for monitoring
+    #   ansible.builtin.cron:
+    #     name: "external drive monitor"
+    #     minute: "*/5"
+    #     job: "{{ script_dir }}/external_drive_monitoring.sh > {{ script_dir }}/external_drive_monitoring.log"
