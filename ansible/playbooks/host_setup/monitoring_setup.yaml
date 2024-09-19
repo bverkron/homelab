@@ -34,7 +34,7 @@
 
     - name: Configure cron job for monitoring script
       ansible.builtin.cron:
-        name: "Run script {{ item }"
+        name: "Run script {{ item }}"
         minute: "*/5"
         job: "{{ script_dir }}/{{ item }} > {{ script_dir }}/{{ item }}.log"
       loop: "{{ scripts }}"
