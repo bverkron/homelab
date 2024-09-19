@@ -1,23 +1,41 @@
 ---
 - hosts: all
   become: true
+  gather_facts: no
   vars:
-    script_name: nas_share_monitoring
-    nas_share_monitor_script_dir: "/root/scripts"
-    nas_share_monitor_script_name: "{{ script_name }}.sh"
-    nas_share_monitor_script_path: "{{ nas_share_monitor_script_dir }}/{{ nas_share_monitor_script_name }}"
+    # script_name: nas_share_monitoring
+    script_dir: "/root/scripts"
+    # nas_share_monitor_script_name: "{{ script_name }}.sh"
+    # nas_share_monitor_script_path: "{{ nas_share_monitor_script_dir }}/{{ nas_share_monitor_script_name }}"
 
   tasks:
+    - name: Ensure destination directory exists
+      file:
+        path: "{{ script_dir }}"
+        state: directory
+
+    - name: Copy contents from source to destination
+      copy:
+        src: "../../../scripts/hosts/monitoring/"
+        dest: "{{ script_dir }}"
+        mode: '+x'
+
     # Currently needs to be run as the root user because of how the network share is mapped by the root user
     # I think because some of the docker containers are running as root? I can't remember.
-    - name: Copy monitoring scripts to run locations
-      ansible.builtin.copy:
-        src: "../../../scripts/hosts/monitoring/{{ nas_share_monitor_script_name }}"
-        dest: "{{ nas_share_monitor_script_path }}"
-        mode: '+x'
+    # - name: Copy monitoring scripts to run locations
+    #   ansible.builtin.copy:
+    #     src: "../../../scripts/hosts/monitoring/{{ nas_share_monitor_script_name }}"
+    #     dest: "{{ nas_share_monitor_script_path }}"
+    #     mode: '+x'
 
     - name: Configure cron job for monitoring
       ansible.builtin.cron:
         name: "nas share monitor"
-        minute: "*/1"
-        job: "{{ nas_share_monitor_script_path }} > {{ nas_share_monitor_script_dir }}/{{ script_name }}.log"
+        minute: "*/5"
+        job: "{{ script_dir }}/nas_share_monitoring.sh > nas_share_monitoring.log"
+
+    - name: Configure cron job for monitoring
+      ansible.builtin.cron:
+        name: "external drive monitor"
+        minute: "*/5"
+        job: "{{ script_dir }}/external_drive_monitoring.sh > external_drive_monitoring.log"
