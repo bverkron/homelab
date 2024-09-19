@@ -8,7 +8,8 @@
       find:
         paths: /media/ext_storage/ftp/cam-ftp/
         # This will wipe the top level camera directories since they were originally created at the very start of when the content started to be written into the ftp directory.
-        # The timestamps of the folders at that level don't get updated when newer files / folder get written within them. Ouch
+        # The timestamps of the folders at that level don't get updated when newer files / folder get written within them. Ouch\
+        # At best it might get updated when a new month folder gets written such as doorbell/09. Then the doorbell folder might show as being modified on the 1st of Sept but stay that way for the whole month
         # file_type: directory
         age: 14d
         recurse: yes
