@@ -1,0 +1,52 @@
+---
+- name: Configure CIFS mount for ReplicateOut
+  hosts: localhost
+  become: yes
+  
+  vars:
+    MOUNT_POINT: /mnt/nas_replicate_out
+
+  vars_prompt:
+    - name: NAS_PASSWORD
+      prompt: "Enter password for {{ MOUNT_POINT }} share"
+      private: yes
+
+  tasks:
+    - name: Install cifs-utils
+      apt:
+        name: cifs-utils
+        state: present
+        update_cache: yes
+
+    - name: Create SMB credentials file
+      copy:
+        dest: /root/.smbcredentials_replicate_out_master_control
+        content: |
+          username=networkbackup
+          password={{ NAS_PASSWORD }}
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Ensure the mount point directory exists
+      file:
+        path: "{{ MOUNT_POINT }}"
+        state: directory
+        owner: mcp
+        group: mcp
+        mode: '0750'
+
+    - name: Add CIFS entry to /etc/fstab
+      lineinfile:
+        path: /etc/fstab
+        line: "//storage.ournetwork.ca/ReplicateOut {{ MOUNT_POINT }} cifs credentials=/root/.smbcredentials_replicate_out_master_control 0 0"
+        state: present
+
+    - name: Mount the CIFS share
+      command: mount -a
+      register: MOUNT_RESULT
+      changed_when: mount_result.rc == 0
+
+    - name: Display result of mount
+      debug:
+        msg: "Mount result: {{ MOUNT_RESULT }}"

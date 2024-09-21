@@ -1,0 +1,2 @@
+#!/bin/bash
+SHARE=ReplicateOut && screen -S background -d -L -Logfile "/tmp/rsync-$(date +%Y-%m-%d_%H-%M-%S.txt)" -m rsync -rtERvv --delete --exclude=".*/" -e "ssh -i /root/.ssh/ided25519_qnap_nas" "admin@qnap-nas.ournetwork.ca:/share/MD0_DATA/./$SHARE/" /mnt/user/
