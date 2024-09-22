@@ -5,13 +5,22 @@
   gather_facts: false
   tasks:
 
-    - name: Get the executing user's name
-      ansible.builtin.command: whoami
-      register: user_name_result
+    # - name: Get the executing user's name
+    #   ansible.builtin.command: whoami
+    #   register: user_name_result
 
-    - name: Display executing user's name
-      ansible.builtin.debug:
-        msg: "Executing user's name: {{ user_name_result.stdout }}"
+    # - name: Display executing user's name
+    #   ansible.builtin.debug:
+    #     msg: "Executing user's name: {{ user_name_result.stdout }}"
+
+    - name: Wake NAS
+      community.general.wakeonlan:
+        mac: '2c:44:fd:1c:61:62'
+        broadcast: 10.88.10.255
+      delegate_to: localhost
+
+    - name: Wait for NAS to become reachable
+      ansible.builtin.wait_for_connection:
 
     - name: Execute rsync command
       ansible.builtin.raw: |
