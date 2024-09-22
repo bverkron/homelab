@@ -1,1 +1,1 @@
-ansible-playbook --ask-become-pass -c local -i localhost, $1
+ansible-playbook -c local -i localhost, $1
