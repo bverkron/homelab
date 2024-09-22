@@ -1,7 +1,8 @@
 ---
 # Had issues with the bash script failing from Semaphore and this provides a cleaner mechanism for integrating with Uptime Kuma and give a nice web dashboard vs something like Cron
 - name: Backup to NAS
-  hosts: localhost
+  hosts: "{{ hosts }}"
+  gather_facts: false
   tasks:
     - name: Execute rsync command
       ansible.builtin.raw: |
