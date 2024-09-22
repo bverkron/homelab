@@ -17,7 +17,6 @@
     #     msg: "Executing user's name: {{ user_name_result.stdout }}"
 
     - name: Wake NAS
-      become: true
       community.general.wakeonlan:
         mac: '2C:44:FD:1C:61:62'
         broadcast: 10.88.10.255
