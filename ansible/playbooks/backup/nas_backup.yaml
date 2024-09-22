@@ -1,7 +1,7 @@
 ---
 # Had issues with the bash script failing from Semaphore and this provides a cleaner mechanism for integrating with Uptime Kuma and give a nice web dashboard vs something like Cron
 - name: SYNC Backups to NAS
-  hosts: "{{ hosts }}"
+  hosts: "{{ TARGET_HOST | default('vector') }}"
   gather_facts: false
   vars:
     MOUNT_PATH: /mnt/nas_replicate_out
