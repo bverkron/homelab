@@ -3,6 +3,9 @@
 - name: SYNC Backups to NAS
   hosts: "{{ hosts }}"
   gather_facts: false
+  vars:
+    MOUNT_PATH: /mnt/nas_replicate_out
+      
   tasks:
 
     # - name: Get the executing user's name
