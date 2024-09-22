@@ -5,6 +5,7 @@
   
   vars:
     MOUNT_POINT: /mnt/nas_replicate_out
+    MOUNT_USER: mcp
 
   vars_prompt:
     - name: NAS_PASSWORD
@@ -32,14 +33,14 @@
       file:
         path: "{{ MOUNT_POINT }}"
         state: directory
-        owner: mcp
-        group: mcp
+        owner: "{{ MOUNT_USER }}"
+        group: "{{ MOUNT_USER }}"
         mode: '0750'
 
     - name: Add CIFS entry to /etc/fstab
       lineinfile:
         path: /etc/fstab
-        line: "//storage.ournetwork.ca/ReplicateOut {{ MOUNT_POINT }} cifs credentials=/root/.smbcredentials_replicate_out_master_control 0 0"
+        line: "//storage.ournetwork.ca/ReplicateOut {{ MOUNT_POINT }} cifs cifs uid={{ MOUNT_USER }},credentials=/root/.smbcredentials_replicate_out_master_control 0 0"
         state: present
 
     - name: Mount the CIFS share
