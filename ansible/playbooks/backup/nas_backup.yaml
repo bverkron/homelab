@@ -6,7 +6,7 @@
   tasks:
     - name: Execute rsync command
       ansible.builtin.raw: |
-        rsync -rtERvv --dry-run --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups/ &> /tmp/rsync-backup-$(date +%Y-%m-%d_%H-%M-%S.txt)
+        rsync -rtERvv --dry-run --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/ &> /tmp/rsync-backup-$(date +%Y-%m-%d_%H-%M-%S.txt)
       register: rsync_result
       ignore_errors: yes
 
