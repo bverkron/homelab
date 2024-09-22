@@ -8,6 +8,10 @@
     MOUNT_USER: mcp
 
   vars_prompt:
+    - name: NAS_USERNAME
+      prompt: "Enter username for {{ MOUNT_POINT }} share (default )"
+      private: yes
+      default: networkbackup
     - name: NAS_PASSWORD
       prompt: "Enter password for {{ MOUNT_POINT }} share"
       private: yes
@@ -23,7 +27,7 @@
       copy:
         dest: /root/.smbcredentials_replicate_out_master_control
         content: |
-          username=networkbackup
+          username={{ NAS_USERNAME }}
           password={{ NAS_PASSWORD }}
         owner: root
         group: root
