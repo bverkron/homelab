@@ -40,7 +40,7 @@
     - name: Add CIFS entry to /etc/fstab
       lineinfile:
         path: /etc/fstab
-        line: "//storage.ournetwork.ca/ReplicateOut {{ MOUNT_POINT }} cifs cifs uid={{ MOUNT_USER }},credentials=/root/.smbcredentials_replicate_out_master_control 0 0"
+        line: "//storage.ournetwork.ca/ReplicateOut {{ MOUNT_POINT }} cifs uid={{ MOUNT_USER }},credentials=/root/.smbcredentials_replicate_out_master_control 0 0"
         state: present
 
     - name: Mount the CIFS share
