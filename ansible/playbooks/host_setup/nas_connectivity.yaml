@@ -5,7 +5,8 @@
   
   vars:
     MOUNT_POINT: /mnt/nas_replicate_out
-    MOUNT_USER: mcp
+    # was using mcp but ansible playbooks that leverage this share use the maintenance user and it's less permissive than the mcp user
+    MOUNT_USER: maintenance
 
   vars_prompt:
     - name: NAS_USERNAME
