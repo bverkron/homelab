@@ -21,3 +21,8 @@
         url: "https://uptime-kuma.ournetwork.ca/api/push/XcfEl3F0QF?status=down&msg=OK&ping="
         method: GET
       when: rsync_result.rc != 0
+
+    - name: Fail if rsync fails
+      ansible.builtin.fail:
+        msg: "Rsync failed with return code {{ rsync_result.rc }}."
+      when: rsync_result.rc != 0      
