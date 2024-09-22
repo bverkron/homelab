@@ -16,11 +16,18 @@
     - name: Wake NAS
       community.general.wakeonlan:
         mac: '2c:44:fd:1c:61:62'
-        broadcast: 10.88.10.255
       delegate_to: localhost
 
     - name: Wait for NAS to become reachable
       ansible.builtin.wait_for_connection:
+
+    # Mount module requires a bunch of duplcate info that's already provided in fstab and configured on the host
+    # Don't want to duplicate that complexity here so running like this instead
+    # https://andreas.scherbaum.la/post/2019-12-09_ansible-just-mount-an-existing-filesystem/
+    - name: Mount NAS
+      command: "mount -v {{ MOUNT_PATH }}"
+      become: true
+      register: mount_result      
 
     - name: Execute rsync command
       ansible.builtin.raw: |
@@ -43,4 +50,17 @@
     - name: Fail if rsync fails
       ansible.builtin.fail:
         msg: "Rsync failed with return code {{ rsync_result.rc }}."
-      when: rsync_result.rc != 0      
+      when: rsync_result.rc != 0
+
+    # Precautionary sleep to give previous commands time to release their open files.
+    # During testing of unmount it would fail if it was done too soon after previous interactions with the share
+    - name: Sleep
+      ansible.builtin.wait_for:
+        timeout: 5
+      delegate_to: localhost
+
+    - name: Unmount NAS
+      become: true
+      ansible.posix.mount:
+        path: "{{ MOUNT_PATH }}"
+        state: unmounted      
