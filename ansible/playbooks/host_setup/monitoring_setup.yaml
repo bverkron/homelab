@@ -6,7 +6,8 @@
     # script_name: nas_share_monitoring
     script_dir: "/root/scripts"
     scripts:
-      - nas_share_monitoring.sh
+      # Disable since moving to new NAS since it keeps the array spun up and the NAS awake
+      # - nas_share_monitoring.sh
       - external_drive_monitoring.sh
     # nas_share_monitor_script_name: "{{ script_name }}.sh"
     # nas_share_monitor_script_path: "{{ nas_share_monitor_script_dir }}/{{ nas_share_monitor_script_name }}"
