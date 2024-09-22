@@ -1,12 +1,12 @@
 ---
 # Had issues with the bash script failing from Semaphore and this provides a cleaner mechanism for integrating with Uptime Kuma and give a nice web dashboard vs something like Cron
-- name: Backup to NAS
+- name: SYNC Backups to NAS
   hosts: "{{ hosts }}"
   gather_facts: false
   tasks:
     - name: Execute rsync command
       ansible.builtin.raw: |
-        rsync -rtERvv --dry-run --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/ &> /tmp/rsync-backup-$(date +%Y-%m-%d_%H-%M-%S.txt)
+        rsync -rtEvv --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/
       register: rsync_result
       ignore_errors: yes
 
