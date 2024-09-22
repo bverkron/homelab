@@ -5,7 +5,7 @@
 # maintenance ALL=(ALL:ALL) NOPASSWD: /usr/bin/sh # For Ansible to use become for running privileged commands
 
 ---
-- hosts: "{{ hosts }}"
+- hosts: "{{ TARGET_HOSTS }}"
   become: true
   gather_facts: no
   tasks:

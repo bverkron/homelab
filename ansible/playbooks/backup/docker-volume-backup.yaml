@@ -1,6 +1,6 @@
 ---
 - name: Run ad-hoc backup using offen/docker-volume-backup
-  hosts: "{{ hosts }}"
+  hosts: "{{ TARGET_HOSTS | default('vector') }}"
   gather_facts: false
   become: true
 
