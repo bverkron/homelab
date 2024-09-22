@@ -35,4 +35,4 @@
       async: 1
       poll: 0
       ignore_errors: true
-      when: reboot_required_file.stat.exists
+      # when: reboot_required_file.stat.exists
