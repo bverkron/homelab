@@ -46,7 +46,7 @@
     - name: Mount the CIFS share
       command: mount -a
       register: MOUNT_RESULT
-      changed_when: mount_result.rc == 0
+      changed_when: MOUNT_RESULT.rc == 0
 
     - name: Display result of mount
       debug:
