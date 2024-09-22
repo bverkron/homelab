@@ -9,7 +9,7 @@
 
   vars_prompt:
     - name: NAS_USERNAME
-      prompt: "Enter username for {{ MOUNT_POINT }} share (default )"
+      prompt: "Enter username for {{ MOUNT_POINT }} share. Default: "
       private: yes
       default: networkbackup
     - name: NAS_PASSWORD
