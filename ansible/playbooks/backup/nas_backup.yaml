@@ -16,11 +16,21 @@
     #   ansible.builtin.debug:
     #     msg: "Executing user's name: {{ user_name_result.stdout }}"
 
+    # Succeeds when run from Semaphore but does nothing for some reason.
+    # The wait wait_for_connection also just wizzes past with success even though the server is still asleep
+    # When run locally it actually wakes the machine
+    # No idea why it's not working from Seamphore. Attempting raw wakeonlan command instead
     - name: Wake NAS
       community.general.wakeonlan:
         mac: '2C:44:FD:1C:61:62'
         broadcast: 10.88.10.255
-      delegate_to: localhost
+      # delegate_to: localhost
+
+    # - name: Update apt and install etherwake for wakeonlan command
+    #   apt:
+    #     name: etherwake
+    #     state: latest
+    #     update_cache: true
 
     - name: Wait for NAS to become reachable
       ansible.builtin.wait_for_connection:
