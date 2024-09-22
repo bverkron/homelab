@@ -16,22 +16,13 @@
     #   ansible.builtin.debug:
     #     msg: "Executing user's name: {{ user_name_result.stdout }}"
 
-    # Succeeds when run from Semaphore but does nothing for some reason.
-    # The wait wait_for_connection also just wizzes past with success even though the server is still asleep
-    # When run locally it actually wakes the machine
-    # No idea why it's not working from Seamphore. Attempting raw wakeonlan command instead
     - name: Wake NAS
       community.general.wakeonlan:
         mac: '2C:44:FD:1C:61:62'
         broadcast: 10.88.10.255
-      # delegate_to: localhost
+      # delegate_to: localhost # This causes the task to not work from Semaphore but it says it succeeded, not sure why. Maybe command does not get sent properly?
 
-    # - name: Update apt and install etherwake for wakeonlan command
-    #   apt:
-    #     name: etherwake
-    #     state: latest
-    #     update_cache: true
-
+    # Does not seem to actually wait when run from Semaphore? Not sure.
     - name: Wait for NAS to become reachable
       ansible.builtin.wait_for_connection:
 
@@ -39,7 +30,7 @@
     # Probably have to wait until the services are up on the other end as opposed to just the "transport connection" being active
     - name: Buffer
       ansible.builtin.wait_for:
-        timeout: 5
+        timeout: 10
       delegate_to: localhost
 
     # Mount module requires a bunch of duplcate info that's already provided in fstab and configured on the host
