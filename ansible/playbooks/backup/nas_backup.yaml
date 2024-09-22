@@ -4,6 +4,15 @@
   hosts: "{{ hosts }}"
   gather_facts: false
   tasks:
+
+    - name: Get the executing user's name
+      ansible.builtin.command: whoami
+      register: user_name_result
+
+    - name: Display executing user's name
+      ansible.builtin.debug:
+        msg: "Executing user's name: {{ user_name_result.stdout }}"
+
     - name: Execute rsync command
       ansible.builtin.raw: |
         rsync -rtEvv --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/
