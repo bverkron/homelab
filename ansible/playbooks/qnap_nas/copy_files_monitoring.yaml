@@ -12,5 +12,10 @@
     retries: 99999999999
     delay: 900
 
+  - name: Display output after each retry
+    debug:
+      msg: "Current output: {{ result.stdout }}"
+    when: result.stdout is defined
+
   # use minimal instead for cleaner output: https://serverfault.com/a/842944
-  - debug: var=result.stdout_lines
+  # - debug: var=result.stdout_lines
