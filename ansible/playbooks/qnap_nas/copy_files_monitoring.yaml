@@ -10,7 +10,7 @@
     register: result
     until: result.stdout.find("all systems go") != -1
     retries: 99999999999
-    delay: 900
+    delay: 10
 
   - name: Display output after each retry
     debug:
