@@ -6,7 +6,7 @@
   tasks:
   - name: Monitor progress...
     # uploads the specified script and executes it as directed. Seems path needs to be relative since the working directory is the directory the playbook is in
-    ansible.builtin.script: ../../../scripts/qnap-nas/copy_files_monitoring.sh
+    ansible.builtin.script: ../../../scripts/qnap-nas/copy_files_monitoring.sh | tee -a /share/MD0_DATA/copy.log
     register: output
 
   # use minimal instead for cleaner output: https://serverfault.com/a/842944
