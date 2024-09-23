@@ -1,3 +1,4 @@
+echo Starting monitoring...
 while true
 do
   AMOUNT=""
