@@ -1,5 +1,5 @@
 ---
-- hosts: "{{ hosts }}"
+- hosts: "{{ TARGET_HOSTS }}"
   gather_facts: no
   tasks:
     - command: echo 'hello world'

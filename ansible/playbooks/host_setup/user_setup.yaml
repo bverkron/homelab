@@ -8,7 +8,7 @@
 # Afer this initial configuration is done you should be able to use {{ created_username }} to run ansible scripts remotely.
 
 ---
-- hosts: "{{ hosts }}"
+- hosts: "{{ TARGET_HOSTS }}"
   become: true
   gather_facts: no
   vars:

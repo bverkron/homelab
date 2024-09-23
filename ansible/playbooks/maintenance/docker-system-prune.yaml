@@ -1,6 +1,6 @@
 ---
 - name: Docker system prune
-  hosts: "{{ hosts }}"
+  hosts: "{{ TARGET_HOSTS | default('vector') }}"
   gather_facts: false
 
   tasks:

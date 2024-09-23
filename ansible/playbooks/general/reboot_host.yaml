@@ -1,6 +1,6 @@
 ---
 - name: Reboot host
-  hosts: "{{ hosts }}"
+  hosts: "{{ TARGET_HOSTS }}"
   gather_facts: false
 
   tasks:
