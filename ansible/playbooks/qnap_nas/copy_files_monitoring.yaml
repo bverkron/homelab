@@ -11,6 +11,8 @@
     until: result.stdout.find("all systems go") != -1
     retries: 99999999999
     delay: 10
+    failed_when: false  # Prevents task from failing outright, enabling retries
+    ignore_errors: true  #
 
   - name: Display output after each retry
     debug:
