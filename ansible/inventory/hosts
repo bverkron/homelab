@@ -1,5 +1,5 @@
 [dockerhosts]
 vector ansible_host=vector.ournetwork.ca ansible_user=maintenance ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
-[nas]
+[qnap-nas]
 qnap219 ansible_host=qnap-nas.ournetwork.ca ansible_port=44 ansible_ssh_common_args='-o StrictHostKeyChecking=no'

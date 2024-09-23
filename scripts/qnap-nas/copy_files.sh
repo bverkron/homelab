@@ -1,0 +1,1 @@
+cp -a /share/MD0_DATA/archive/ /share/single_disk_root/archive/

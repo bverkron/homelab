@@ -22,6 +22,11 @@
     - name: Wait for NAS to become reachable
       ansible.builtin.wait_for_connection:
 
+    - name: Remount a mounted volume
+      ansible.posix.mount:
+        path: /mnt/nas_replicate_out
+        state: remounted
+
     - name: Execute rsync command
       ansible.builtin.raw: |
         rsync -rtEvv --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/
