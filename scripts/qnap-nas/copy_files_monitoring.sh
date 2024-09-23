@@ -1,4 +1,3 @@
-echo Starting monitoring...
 # Loop doesn't work with Ansible Semaphore because it will only capture the output after it's done by default. Might be a way to get it "live" but easier to just loop in Semaphore
 # while true
 # do

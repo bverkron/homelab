@@ -4,7 +4,7 @@
   gather_facts: false
 
   tasks:
-  - name: Monitor progress...
+  - name: Calculating progress...
     # uploads the specified script and executes it as directed. Seems path needs to be relative since the working directory is the directory the playbook is in
     ansible.builtin.script: ../../../scripts/qnap-nas/copy_files_monitoring.sh | tee -a /share/MD0_DATA/copy.log
     register: result
@@ -14,10 +14,10 @@
     # failed_when: false  # Prevents task from failing outright, enabling retries
     # ignore_errors: true  #
 
-  - name: Display output after each retry
-    debug:
-      msg: "Output: {{ result.stdout }}"
-    when: result.stdout is defined
+  # - name: Progress...
+  #   debug:
+  #     msg: "Output: {{ result.stdout }}"
+  #   when: result.stdout is defined
 
   # use minimal instead for cleaner output: https://serverfault.com/a/842944
-  # - debug: var=result.stdout_lines
+  - debug: var=result.stdout_lines
