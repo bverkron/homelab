@@ -5,4 +5,4 @@ vector ansible_host=vector.ournetwork.ca ansible_user=maintenance ansible_ssh_co
 qnap219 ansible_host=qnap-nas.ournetwork.ca ansible_ssh_common_args='-o StrictHostKeyChecking=no'
 
 [qnap-nas-old]
-qnap219 ansible_host=qnap-nas.ournetwork.ca ansible_port=44 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+qnap219-old ansible_host=qnap-nas.ournetwork.ca ansible_port=44 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
