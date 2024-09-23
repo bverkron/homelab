@@ -1,0 +1,13 @@
+---
+- name: Copy one folder to another on QNAP NAS
+  hosts: qnap-nas
+  gather_facts: false
+
+  tasks:
+  - name: Copy folders
+    # uploads the specified script and executes it as directed. Seems path needs to be relative since the working directory is the directory the playbook is in
+    ansible.builtin.script: ../../../scripts/qnap-nas/copy_files_monitoring.sh
+    register: output
+
+  # use minimal instead for cleaner output: https://serverfault.com/a/842944
+  - debug: var=output.stdout_lines
