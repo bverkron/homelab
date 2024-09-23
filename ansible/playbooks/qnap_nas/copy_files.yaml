@@ -1,6 +1,6 @@
 ---
 - name: Copy one folder to another on QNAP NAS
-  hosts: nas
+  hosts: qnap-nas
   gather_facts: false
 
   tasks:
