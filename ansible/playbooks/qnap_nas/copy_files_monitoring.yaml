@@ -1,5 +1,5 @@
 ---
-- name: Monitor file copy progress
+- name: Copy progress
   hosts: qnap-nas
   gather_facts: false
 
