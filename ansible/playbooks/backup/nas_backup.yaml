@@ -28,9 +28,9 @@
 
     # Seems to need a bit more time after wait_for_connection succeeds before it will be able to mount the share.
     # Probably have to wait until the services are up on the other end as opposed to just the "transport connection" being active
-    - name: Buffer
+    - name: Wait for NAS shares to become available...
       ansible.builtin.wait_for:
-        timeout: 10
+        timeout: 15
       delegate_to: localhost
 
     # Mount module requires a bunch of duplcate info that's already provided in fstab and configured on the host
