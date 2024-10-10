@@ -47,7 +47,7 @@
       #remote_user: maintenance
       #become: true # This seems to be required when running locally, not sure maintenance user does not work
       ansible.builtin.raw: |
-        rsync -rtEvv --delete --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/
+        rsync -rtEvv --delete --delete-after --exclude=".*/" /media/ext_storage/backups/ /mnt/nas_replicate_out/vector/backups_sync/
       register: rsync_result
       ignore_errors: yes
 
