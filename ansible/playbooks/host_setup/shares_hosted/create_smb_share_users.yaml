@@ -1,0 +1,21 @@
+---
+- name: Create Samba Users
+  hosts: all
+  become: yes  
+  vars_prompt:
+    - name: "media_samba_password"
+      prompt: "Enter the Samba password for the media user"
+      private: yes
+
+    - name: Ensure user media exists with disabled login and password
+      user:
+        name: "{{ media_user }}"
+        state: present
+        shell: "/usr/sbin/nologin"   # Equivalent to --disabled-login
+        password: "*"                # Equivalent to --disabled-password
+        create_home: no              # Equivalent to --no-create-home
+
+    - name: Set Samba password for the media user
+      command: "echo -ne '{{ media_samba_password }}\n{{ media_samba_password }}\n' | smbpasswd -s -a {{ media_user }}"
+      args:
+        creates: "/var/lib/samba/private/passdb.tdb"      
