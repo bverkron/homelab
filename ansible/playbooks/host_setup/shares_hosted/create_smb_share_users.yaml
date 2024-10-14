@@ -6,7 +6,8 @@
     - name: "media_samba_password"
       prompt: "Enter the Samba password for the media user"
       private: yes
-
+  
+  tasks:
     - name: Ensure user media exists with disabled login and password
       user:
         name: "{{ media_user }}"
