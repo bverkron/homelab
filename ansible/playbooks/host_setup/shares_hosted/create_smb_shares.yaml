@@ -1,6 +1,7 @@
 ---
 - name: Setup media directories and Samba
   hosts: all
+  gather_facts: no
   become: yes
 
   vars:
