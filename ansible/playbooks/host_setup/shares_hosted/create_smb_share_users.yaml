@@ -9,6 +9,7 @@
   
   tasks:
     - name: Ensure user media exists with disabled login and password
+      become: true
       user:
         name: "{{ media_user }}"
         state: present
@@ -19,4 +20,4 @@
     - name: Set Samba password for the media user
       command: "echo -ne '{{ media_samba_password }}\n{{ media_samba_password }}\n' | smbpasswd -s -a {{ media_user }}"
       args:
-        creates: "/var/lib/samba/private/passdb.tdb"      
+        creates: "/var/lib/samba/private/passdb.tdb"
