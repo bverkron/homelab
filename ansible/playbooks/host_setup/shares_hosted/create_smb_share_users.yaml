@@ -18,6 +18,7 @@
     # TODO: Debug this...
     # Keeps hanging no matter what I try. Likely it's stuck at a prompt for some reason
     # No combination of differnt options I tried worked (including creating a totally different user with zero additiona options)
+    # UPDATE: MIGHT be because sudo password via ask-become-pass was wrong. ZERO feedback from ansible that it was wrong, just hung!
     - name: Create media user
       become: true
       user:

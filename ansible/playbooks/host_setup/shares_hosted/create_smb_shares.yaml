@@ -18,8 +18,8 @@
         browsable: yes
         writable: yes
         read_only: no
-      video:
-        path: "/media/ext_storage/video"
+      videos:
+        path: "/media/ext_storage/videos"
         browsable: yes
         writable: yes
         read_only: no
@@ -61,18 +61,26 @@
         path: /etc/samba/smb.conf
         insertafter: EOF
         block: |
-          {% for item in media_folders %}
-          [{{ item.key }}]
-          path = {{ item.value.path }}
+          [audio]
+          path = {{ media_folders.audio.path }}
           valid users = @{{ media_user }}
-          browsable = {{ item.value.browsable | bool | lower }}
-          writable = {{ item.value.writable | bool | lower }}
-          read only = {{ item.value.read_only | bool | lower }}
-          
-          {% endfor %}
-      loop: "{{ media_folders | dict2items }}"
-      loop_control:
-        label: "{{ item.key }}"
+          browsable = yes
+          writable = yes
+          read only = no
+
+          [photos]
+          path = {{ media_folders.photos.path }}
+          valid users = @{{ media_user }}
+          browsable = yes
+          writable = yes
+          read only = no
+
+          [videos]
+          path = {{ media_folders.videos.path }}
+          valid users = @{{ media_user }}
+          browsable = yes
+          writable = yes
+          read only = no
 
     - name: Restart Samba services
       service:
