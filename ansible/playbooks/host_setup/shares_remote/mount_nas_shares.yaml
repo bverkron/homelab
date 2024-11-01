@@ -1,0 +1,70 @@
+# UNTESTED?
+---
+- name: Configure CIFS mounts for multiple shares
+  hosts: localhost
+  become: yes
+
+  vars:
+    shares:
+      - name: ReplicateOut
+        MOUNT_POINT: /mnt/nas_replicate_out
+        MOUNT_USER: maintenance
+      - name: AnotherShare
+        MOUNT_POINT: /mnt/another_share
+        MOUNT_USER: another_user
+
+  vars_prompt:
+    - name: NAS_USERNAME
+      prompt: "Enter username for NAS shares"
+      private: yes
+      default: 
+    - name: NAS_PASSWORD
+      prompt: "Enter password for NAS shares"
+      private: yes
+
+  tasks:
+    - name: Install cifs-utils
+      apt:
+        name: cifs-utils
+        state: present
+        update_cache: yes
+
+    - name: Create CIFS mounts for each share
+      loop: "{{ shares }}"
+      vars:
+        MOUNT_POINT: "{{ item.MOUNT_POINT }}"
+        MOUNT_USER: "{{ item.MOUNT_USER }}"
+      tasks:
+        - name: Create SMB credentials file
+          copy:
+            dest: "/root/.smbcredentials_{{ item.name | lower }}"
+            content: |
+              username={{ NAS_USERNAME }}
+              password={{ NAS_PASSWORD }}
+            owner: root
+            group: root
+            mode: '0600'
+
+        - name: Ensure the mount point directory exists
+          file:
+            path: "{{ MOUNT_POINT }}"
+            state: directory
+            owner: "{{ MOUNT_USER }}"
+            group: "{{ MOUNT_USER }}"
+            mode: '0750'
+
+        - name: Add CIFS entry to /etc/fstab
+          lineinfile:
+            path: /etc/fstab
+            line: "//storage.ournetwork.ca/{{ item.name }} {{ MOUNT_POINT }} cifs uid={{ MOUNT_USER }},credentials=/root/.smbcredentials_{{ item.name | lower }} 0 0"
+            state: present
+
+        - name: Mount the CIFS share
+          command: mount -a
+          register: MOUNT_RESULT
+          changed_when: MOUNT_RESULT.rc == 0
+
+    - name: Display mount results
+      debug:
+        msg: "Mount result for {{ item.name }}: {{ MOUNT_RESULT }}"
+      loop: "{{ shares }}"
