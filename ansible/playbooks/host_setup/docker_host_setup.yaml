@@ -34,3 +34,28 @@
         name: "{{ lookup('env', 'USER') }}"
         groups: "docker"
         append: yes
+    
+    # Fix networking issue on host when going past 29 Docker networks.
+    # https://www.reddit.com/r/docker/comments/1gezvpz/host_networking_drops_when_starting_up_more_than/
+    # https://www.reddit.com/r/selfhosted/comments/1az6mqa/psa_adjust_your_docker_defaultaddresspool_size/
+    # https://straz.to/2021-09-08-docker-address-pools/
+    # NEEDS TESTING VIA ANSIBLE
+    - name: Configure Docker daemon.json with custom address pools
+      ansible.builtin.copy:
+        dest: /etc/docker/daemon.json
+        content: |
+            {
+              "default-address-pools" : [
+                {
+                  "base" : "172.17.0.0/12",
+                  "size" : 20
+                },
+                {
+                  "base" : "192.168.0.0/16",
+                  "size" : 24
+                }
+              ]
+            }
+        owner: root
+        group: root
+        mode: '0644'
