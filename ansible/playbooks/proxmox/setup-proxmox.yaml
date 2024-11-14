@@ -1,0 +1,5 @@
+---
+- name: Setup Proxmox server
+  hosts: pve.ournetwork.ca
+  roles:
+    - proxmox
