@@ -6,3 +6,6 @@ qnap219 ansible_host=qnap-nas.ournetwork.ca ansible_ssh_common_args='-o StrictHo
 
 [qnap-nas-old]
 qnap219-old ansible_host=qnap-nas.ournetwork.ca ansible_port=44 ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+
+[proxmox]
+pve.ournetwork.ca ansible_host=pve.ournetwork.ca
