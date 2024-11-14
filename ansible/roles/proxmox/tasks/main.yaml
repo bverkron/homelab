@@ -17,7 +17,7 @@
     - name: Comment out Ceph Quincy repository in ceph.list
       replace:
         path: /etc/apt/sources.list.d/ceph.list
-        regexp: '^deb .*proxmox.com/debian/ceph-quincy .* enterprise'
+        regexp: '^deb .*proxmox.com/.*ceph-quincy .* enterprise'
         replace: '# \g<0>'
 
     - name: Add Ceph Quincy no-subscription repository in ceph.list
