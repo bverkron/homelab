@@ -1,0 +1,49 @@
+---
+- name: Generate and deploy SSH keys
+  hosts: localhost
+  become: no
+  gather_facts: no
+  vars_prompt:
+    - name: "remote_host"
+      prompt: "Enter the hostname (e.g., pve-setup.ournetwork.ca)"
+      private: no
+      default: "pve-setup.ournetwork.ca"  # Default value for remote host
+    - name: "remote_user"
+      prompt: "Enter the username (e.g., root)"
+      private: no
+      default: "root"  # Default value for remote user
+
+  tasks:
+    # 1. Generate new SSH keys
+    - name: Generate SSH private and public keys
+      openssh_keypair:
+        path: "{{ lookup('env', 'HOME') }}/.ssh/{{ remote_user }}_{{ remote_host }}_key"
+        type: rsa
+        size: 4096
+        force: no
+      register: ssh_key
+
+    # 2. Debug task to inspect the ssh_key variable
+    - name: Debug ssh_key variable
+      debug:
+        var: ssh_key
+
+    # 3. Use ssh-copy-id to copy the public key to the remote host
+    - name: Copy public key to remote host using ssh-copy-id
+      command:
+        cmd: "ssh-copy-id -i {{ ssh_key.filename }}.pub {{ remote_user }}@{{ remote_host }}"
+        creates: "/home/{{ remote_user }}/.ssh/authorized_keys"
+      become: no
+      environment:
+        SSH_AUTH_SOCK: "{{ lookup('env', 'SSH_AUTH_SOCK') }}"  # Use the local SSH agent if available
+
+    # 4. Configure local SSH to use the new key for the specified host
+    - name: Set up local SSH config
+      lineinfile:
+        path: "{{ lookup('env', 'HOME') }}/.ssh/config"
+        create: yes
+        line: |
+          Host {{ remote_host }}
+            HostName {{ remote_host }}
+            User {{ remote_user }}
+            IdentityFile {{ ssh_key.filename }}
