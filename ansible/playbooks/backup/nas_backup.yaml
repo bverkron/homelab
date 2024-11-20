@@ -18,7 +18,7 @@
 
     - name: Wake NAS
       community.general.wakeonlan:
-        mac: '2C:44:FD:1C:61:62'
+        mac: '30:9C:23:09:73:D7'
         broadcast: 10.88.10.255
       # delegate_to: localhost # This causes the task to not work from Semaphore but it says it succeeded, not sure why. Maybe command does not get sent properly?
 
