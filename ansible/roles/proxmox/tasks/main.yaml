@@ -1,26 +1,89 @@
+# Baed on suggestions from chat GPU based on a Lenovo M75Q with Ryzen 5650GE and 32 GB of RAM
+# Custom stuff added like nag removal
 ---
-- name: Update Proxmox and Ceph repositories
-  hosts: proxmox
-  become: yes
-  tasks:
-    - name: Comment out Proxmox enterprise repository in pve-enterprise.list
-      replace:
-        path: /etc/apt/sources.list.d/pve-enterprise.list
-        regexp: '^deb .*proxmox.com.* .* enterprise'
-        replace: '# \g<0>'
+# Via: https://github.com/ironicbadger/ansible-role-proxmox-nag-removal/blob/master/tasks/remove-nag.yml
+- name: Remove nag message
+  replace:
+    path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+    regexp: 'res[\s\n]*\.data\.status\.toLowerCase\(\) !== .active.'
+    replace: "false"
+    backup: yes
 
-    - name: Add Proxmox no-subscription repository in pve-enterprise.list
-      lineinfile:
-        path: /etc/apt/sources.list.d/pve-enterprise.list
-        line: 'deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription'
+- name: restart pveproxy
+  service:
+    name: pveproxy
+    state: restarted
 
-    - name: Comment out Ceph Quincy repository in ceph.list
-      replace:
-        path: /etc/apt/sources.list.d/ceph.list
-        regexp: '^deb .*proxmox.com/.*ceph-quincy .* enterprise'
-        replace: '# \g<0>'
+- name: Add Proxmox non-subscription repository
+  copy:
+    dest: /etc/apt/sources.list.d/pve-no-subscription.list
+    content: |
+      deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
 
-    - name: Add Ceph Quincy no-subscription repository in ceph.list
-      lineinfile:
-        path: /etc/apt/sources.list.d/ceph.list
-        line: 'deb http://download.proxmox.com/debian/ceph-quincy bookworm no-subscription'
+- name: Rename enterprise repository file to keep a backup
+  command:
+    cmd: mv /etc/apt/sources.list.d/pve-enterprise.list /etc/apt/sources.list.d/pve-enterprise.list.bak
+  args:
+    removes: /etc/apt/sources.list.d/pve-enterprise.list
+  changed_when: true
+
+- name: Update apt cache after adding repository
+  apt:
+    update_cache: yes
+
+- name: Update and upgrade the system
+  apt:
+    upgrade: dist
+
+- name: Enable IOMMU in GRUB
+  lineinfile:
+    path: /etc/default/grub
+    regexp: '^GRUB_CMDLINE_LINUX_DEFAULT'
+    line: 'GRUB_CMDLINE_LINUX_DEFAULT="quiet amd_iommu=on iommu=pt"'
+
+- name: Update GRUB configuration
+  command: update-grub
+  when: ansible_facts.os_family == "Debian"
+
+- name: Set swappiness to 10
+  sysctl:
+    name: vm.swappiness
+    value: 10
+    state: present
+
+- name: Discover active network interfaces
+  shell: "ip -o link show | awk -F': ' '/state UP/ {print $2}'"
+  register: active_interfaces
+
+- name: Enable Jumbo Frames on active interfaces
+  loop: "{{ active_interfaces.stdout_lines }}"
+  command: ip link set mtu 9000 dev {{ item }}
+  ignore_errors: yes
+
+# - name: Install essential packages
+#   apt:
+#     name:
+#       - qemu-guest-agent
+#       - pciutils
+#     state: present
+
+# # - name: Install Fail2ban
+# #   apt:
+# #     name: fail2ban
+# #     state: present
+
+# # - name: Configure Fail2ban for Proxmox Web GUI
+# #   blockinfile:
+# #     path: /etc/fail2ban/jail.local
+# #     block: |
+# #       [proxmox]
+# #       enabled = true
+# #       port = 8006
+# #       filter = proxmox
+# #       logpath = /var/log/pveproxy/access.log
+# #       maxretry = 3
+
+# # - name: Restart Fail2ban
+# #   service:
+# #     name: fail2ban
+# #     state: restarte

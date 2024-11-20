@@ -1,0 +1,7 @@
+---
+- name: Setup Proxmox server
+  # hosts: pveournetwork.ca
+  # Proxmox was setup on a different IP and thus different DNS name than it's final one so switched to this during setup
+  hosts: pve-setup.ournetwork.ca
+  roles:
+    - proxmox
