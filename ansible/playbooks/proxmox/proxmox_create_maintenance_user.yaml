@@ -1,0 +1,102 @@
+# Gave up on this for now since ChatGPT does not seem to use the right endpoints for assigning roles to a user
+# Looks like you have to properly do it using the acl API endpoint using a PUT request and I was too tired to make it myself
+# https://pve.proxmox.com/pve-docs/api-viewer/index.html#/access/acl
+
+---
+- name: Create a non-root user and assign VM creation permissions in Proxmox
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - proxmox_vars_prod_1.yaml
+
+  vars_prompt:
+    - name: "api_user"
+      prompt: "Enter your Proxmox API username (default: root)"
+      private: no
+      default: "root"
+    - name: "api_token"
+      prompt: "Enter your Proxmox API token"
+      private: yes
+    - name: "password"
+      prompt: "Enter the password for the new user"
+      private: yes
+
+  vars:
+    username: "maintenance"
+    role_name: "vm_creator"
+    proxmox_hostname: "pve-setup.ournetwork.ca"
+    proxmox_port: "8006"
+    proxmox_node: "pve-node"  # Specify the Proxmox node name
+    authorization: "PVEAPIToken={{ api_user }}@pam!usercreation={{ api_token }}"  # Global Authorization header
+
+  tasks:
+
+    - name: List available roles in Proxmox
+      uri:
+        url: "https://{{ proxmox_hostname }}:{{ proxmox_port }}/api2/json/access/roles"
+        method: GET
+        headers:
+          Authorization: "{{ authorization }}"
+        validate_certs: no
+      register: roles_list
+
+    - name: Show available roles
+      debug:
+        var: roles_list
+
+
+    - name: Check if user exists in Proxmox
+      uri:
+        url: "https://{{ proxmox_hostname }}:{{ proxmox_port }}/api2/json/access/users"
+        method: GET
+        headers:
+          Authorization: "{{ authorization }}"
+        validate_certs: no
+      register: user_check
+
+    - name: Set user_exists fact
+      set_fact:
+        user_exists: "{{ (user_check.json.data | selectattr('userid', 'equalto', username + '@pve') | list) | length > 0 }}"
+
+    - name: Create user in Proxmox if not exists
+      when: not user_exists
+      uri:
+        url: "https://{{ proxmox_hostname }}:{{ proxmox_port }}/api2/json/access/users"
+        method: POST
+        headers:
+          Authorization: "{{ authorization }}"
+        body:
+          userid: "{{ username }}@pve"
+          password: "{{ password }}"
+          enable: 1
+        body_format: json
+        validate_certs: no
+      register: create_user
+
+    - name: Assign role to user for the Proxmox node
+      uri:
+        url: "https://{{ proxmox_hostname }}:{{ proxmox_port }}/api2/json/access/permissions"
+        method: POST
+        headers:
+          Authorization: "{{ authorization }}"
+        body:
+          path: "/nodes/{{ proxmox_node }}"
+          roleid: "PVEVMAdmin"
+          userid: "{{ username }}@pve"
+        body_format: json
+        validate_certs: no
+      register: assign_permissions
+
+    - name: Show user creation result (if created)
+      debug:
+        var: create_user
+      when: not user_exists
+
+    - name: Show user already exists message
+      debug:
+        msg: "User {{ username }} already exists."
+      when: user_exists
+
+    - name: Show permission assignment result
+      debug:
+        var: assign_permissions

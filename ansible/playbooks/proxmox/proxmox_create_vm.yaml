@@ -1,0 +1,64 @@
+# Write me ansible playbooks that meet the following criteria
+# - Creates a VM in Proxmox using the API (or whaterver the best method is from another remote machine)
+# - Variabalize the hostname of the Proxmox server
+# - Uses a separate yaml file for authentication that can be re-used by other playbooks
+# - Handles authentication with an API key that was manually generated
+# - Prompts for the API token
+# - Get the next available VM ID automatically
+# - Don't put any comments in the playbook
+# - use .yaml extension instead of .yml
+
+# NEEDS RE-TESTING since making changes with ChatGPT
+
+---
+- name: Create a VM in Proxmox with specified specs and random name
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - proxmox_vars_prod_1.yaml
+
+  vars_prompt:
+    - name: "api_user"
+      prompt: "Enter your Proxmox API username (default: maintenance)"
+      private: no
+      default: "maintenance"
+    - name: "api_token_secret"
+      prompt: "Enter your Proxmox API token secret"
+      private: yes
+
+  vars:
+    api_token_id: vmadmin
+    vm_name_prefix: "new-vm-"
+    vm_cores: 2           # Default number of cores
+    vm_memory: 2048       # Default memory size in MB
+    vm_bridge: "vmbr0"    # Default network bridge
+    vm_storage: "local"   # Default storage name
+    vm_disk_size: 100     # Disk size in GB
+    cdrom_iso: "local:iso/installation-media.iso"  # Path to the ISO
+
+  tasks:
+    - name: Generate a random 3-digit number
+      ansible.builtin.set_fact:
+        random_suffix: "{{ 100 + (lookup('random', '899') | int) }}"
+
+    - name: Generate the VM name
+      ansible.builtin.set_fact:
+        vm_name: "{{ vm_name_prefix }}{{ random_suffix }}"
+
+    - name: Create a new VM with specified resources
+      community.general.proxmox_kvm:
+        api_user: "{{ api_user }}@pve"
+        api_token_id: "{{ api_token_id }}"
+        api_token_secret: "{{ api_token_secret }}"
+        api_host: "{{ proxmox_hostname }}"
+        name: "{{ vm_name }}"
+        node: prod-1
+        cores: "{{ vm_cores }}"
+        memory: "{{ vm_memory }}"
+        net0: "virtio,bridge={{ vm_bridge }}"
+        storage: "{{ vm_storage }}"
+        disks:
+          - size: "{{ vm_disk_size }}G"
+            storage: "{{ vm_storage }}"
+            type: "scsi"
+        cdrom: "{{ cdrom_iso }}"

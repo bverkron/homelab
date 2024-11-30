@@ -1,0 +1,2 @@
+proxmox_hostname: "pve-setup.ournetwork.ca"
+proxmox_node: "prod-1"

@@ -2,6 +2,11 @@
 # Custom stuff added like nag removal
 ---
 # Via: https://github.com/ironicbadger/ansible-role-proxmox-nag-removal/blob/master/tasks/remove-nag.yml
+# Consider switching to this...
+# echo "DPkg::Post-Invoke { \"dpkg -V proxmox-widget-toolkit | grep -q '/proxmoxlib\.js$'; if [ \$? -eq 1 ]; then { echo 'Removing subscription nag from UI...'; sed -i '/.*data\.status.*{/{s/\!//;s/active/NoMoreNagging/}' /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js; }; fi\"; };" >/etc/apt/apt.conf.d/no-nag-script
+# via https://www.reddit.com/r/selfhosted/comments/1gxsgb5/comment/lyl2epo/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+# Also note the rollback step...
+# apt reinstall proxmox-widget-toolkit
 - name: Remove nag message
   replace:
     path: /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js

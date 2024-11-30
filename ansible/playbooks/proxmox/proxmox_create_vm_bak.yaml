@@ -1,0 +1,50 @@
+# Write me ansible playbooks that meet the following criteria
+# - Creates a VM in Proxmox using the API (or whaterver the best method is from another remote machine)
+# - Variabalize the hostname of the Proxmox server
+# - Uses a separate yaml file for authentication that can be re-used by other playbooks
+# - Handles authentication with an API key that was manually generated
+# - Prompts for the API token
+# - Get the next available VM ID automatically
+# - Don't put any comments in the playbook
+# - use .yaml extension instead of .yml
+
+---
+- name: Create a VM in Proxmox
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+    - proxmox_vars.yaml
+
+  vars_prompt:
+    - name: "api_user"
+      prompt: "Enter your Proxmox API username (default: maintenance)"
+      private: no
+      default: "maintenance"  # Use the default from the proxmox_vars.yaml
+    - name: "api_token"
+      prompt: "Enter your Proxmox API token"
+      private: yes  # Secure input for API token
+
+  vars:
+    vm_name: "test-vm"  # Default VM name
+    vm_cores: 2         # Default number of cores
+    vm_memory: 2048     # Default memory size in MB
+    vm_bridge: "vmbr0"  # Default network bridge
+    vm_storage: "local" # Default storage name    
+
+  tasks:
+    - name: Get next available VM ID
+      community.proxmox.proxmox_node:
+        api_user: "{{ api_user }}"
+        api_token: "{{ api_token }}"
+        node: "{{ proxmox_node }}"
+        hostname: "{{ proxmox_hostname }}"
+        validate_certs: no
+      register: vm_ids
+
+    - name: Set next available VM ID
+      set_fact:
+        vm_id: "{{ (vm_ids.json.data | map(attribute='vmid') | max) | int + 1 }}"
+
+    - name: Create VM in Proxmox
+      community.proxmox.proxmox_vm_qemu:
+        api_user: "{{ api_user }
