@@ -1,0 +1,7 @@
+---
+- name: Reload Caddy configuration
+  hosts: vector
+  gather_facts: false
+  tasks:
+    - name: Reload Caddy
+      command: docker exec -w /etc/caddy caddy caddy reload
